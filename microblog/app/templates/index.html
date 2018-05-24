@@ -19,7 +19,7 @@
 <!--</html>-->
 
 
-<!-- IF statement >------------------------------------------------------------------------------------>
+<!-- IF statement and loop  >------------------------------------------------------------------------------------>
 
 <html>
     <head>
@@ -31,6 +31,9 @@
     </head>
     <body>
         <h1>Hello, {{ user.username }}!</h1>
+    {% for post in posts %}
+    <div><p>{{ post.author.username }} syas: <b>{{ post.body }}</b> </p></div>
+    {% endfor %}
     </body>
 </html>
 
