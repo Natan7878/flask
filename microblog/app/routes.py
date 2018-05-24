@@ -14,6 +14,10 @@ def index():
         {
             "author": {'username': 'Susan'},
             'body': 'The Avengers movie was so cool!'
+        },
+        {
+            "author": {'username' : "Dima"},
+            'body' : "Next step is Template Inheritance!"
         }
     ]
     return render_template('index.html',  title='Home', user=user, posts=posts)
