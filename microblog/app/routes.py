@@ -1,11 +1,10 @@
 from flask import render_template, flash, redirect, url_for, request
-from app import app
-from app.forms import LoginForm
-from flask_login import current_user, login_user
-from flask_login import logout_user
-from flask_login import login_required
+from app import app, db
+from app.forms import LoginForm, RegistrationForm
+from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User
 from werkzeug.urls import url_parse
+
 
 
 @app.route('/')
@@ -13,21 +12,21 @@ from werkzeug.urls import url_parse
 @login_required
 def index():
     # user = {"username": "Natan"}
-    # posts = [
-    #     {
-    #         "author": {'username': 'John'},
-    #         'body':   'Beautifuly day in Portland!'
-    #     },
-    #     {
-    #         "author": {'username': 'Susan'},
-    #         'body': 'The Avengers movie was so cool!'
-    #     },
-    #     {
-    #         "author": {'username': "Dima"},
-    #         'body': "Next step is Template Inheritance!"
-    #     }
-    # ]
-    return render_template('index.html',  title='Home', user=user, posts=posts)
+    posts = [
+        {
+            "author": {'username': 'John'},
+            'body':   'Beautifuly day in Portland!'
+        },
+        {
+            "author": {'username': 'Susan'},
+            'body': 'The Avengers movie was so cool!'
+        },
+        {
+            "author": {'username': "Dima"},
+            'body': "Next step is Template Inheritance!"
+        }
+    ]
+    return render_template('index.html',  title='Home', posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -52,3 +51,18 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user! ')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
